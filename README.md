@@ -1,9 +1,8 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astro Ajinkya | Expert Astrology & Spiritual Guidance</title>
+    <title>Astro Vipul Sharma | Expert Astrology & Spiritual Guidance</title>
     <style>
         /* CSS Variables for a Mystical & Elegant Theme */
         :root {
@@ -440,7 +439,7 @@
 
     <!-- Header -->
     <header>
-        <a href="#" class="logo">Astro Ajinkya</a>
+        <a href="#" class="logo">Vipul Sharma</a>
         
         <!-- Hamburger Menu Button -->
         <div class="menu-toggle" id="mobile-menu">
@@ -463,7 +462,7 @@
     <!-- Hero / About Section -->
     <section class="hero" id="home">
         <h2>Welcome to Divine Insights</h2>
-        <h1>Astro Ajinkya</h1>
+        <h1>Astro Vipul Sharma</h1>
         <h3>Architect of Destiny & Spiritual Guide</h3>
         <p>With over a decade of experience in Vedic Astrology and Intuitive Tarot, I specialize in the ancient Parashari system to provide precise life readings. As a qualified practitioner based in Jaipur, I have helped hundreds of individuals align their karmic paths, providing grounded remedies and clarity for career, love, and spiritual wellbeing.</p>
         <div class="btn-group">
@@ -584,12 +583,12 @@
         <h2 class="section-title">Client Testimonials</h2>
         <div class="test-grid">
             <div class="test-card">
-                "Ajinkya's career timing was spot on! I got my promotion exactly when he predicted."
-                <span>- Kartik P.</span>
+                "Vipul's career timing was spot on! I got my promotion exactly when he predicted."
+                <span>- Sourabh B.</span>
             </div>
             <div class="test-card">
                 "Life-changing energy healing session. I feel much lighter and more focused now."
-                <span>- Samridhi S.</span>
+                <span>- Amit S.</span>
             </div>
         </div>
     </section>
@@ -638,10 +637,10 @@
 
     <!-- Footer -->
     <footer>
-        <p><strong>Ajinkya Wadhwani - Professional Astrologer</strong></p>
-        <p>G202, Hanging Gardens, Bhankrota, Jaipur 302026</p>
+        <p><strong>Vipul Sharma Wadhwani - Professional Astrologer</strong></p>
+        <p>7 JHA 37, Jawahar nagar, Jaipur, 302004</p>
         <div class="footer-links">
-            <p>&copy; 2026 astroajinkya.com</p>
+            <p>&copy; 2026 https://gauravtanwargithub.github.io</p>
             <a href="#">Terms & Conditions</a> | <a href="#">Disclaimer</a>
         </div>
     </footer>
