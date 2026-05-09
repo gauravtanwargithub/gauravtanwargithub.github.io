@@ -41,6 +41,7 @@
             top: 0;
             z-index: 1000;
             border-bottom: 2px solid var(--secondary-color);
+            flex-wrap: wrap; /* Required for mobile drop-down */
         }
 
         .logo {
@@ -49,6 +50,23 @@
             font-weight: bold;
             text-decoration: none;
             letter-spacing: 1px;
+        }
+
+        /* Hamburger Menu Icon (Hidden on Desktop) */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+            z-index: 1001;
+        }
+
+        .menu-toggle .bar {
+            width: 30px;
+            height: 3px;
+            background-color: var(--secondary-color);
+            transition: all 0.3s ease-in-out;
+            border-radius: 3px;
         }
 
         nav ul {
@@ -349,18 +367,6 @@
         }
 
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                padding: 1rem;
-                gap: 1rem;
-            }
-            
-            nav ul {
-                gap: 1rem;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
             .hero { padding: 5rem 5%; }
             .hero h1 { font-size: 2.2rem; }
             .hero h2 { font-size: 1.2rem; }
@@ -374,23 +380,56 @@
 
             .btn { width: 100%; max-width: 300px; }
             .contact-container { padding: 1.5rem; }
-        }
 
-        @media (max-width: 480px) {
+            /* MOBILE MENU STYLING */
+            header {
+                flex-direction: row; /* Keeps logo and button side-by-side */
+            }
+
+            .menu-toggle {
+                display: flex; /* Show the hamburger button */
+            }
+
+            nav {
+                width: 100%;
+                display: none; /* Hide menu items by default */
+            }
+
+            nav.active {
+                display: block; /* Show menu when active class is added */
+            }
+
             nav ul {
                 flex-direction: column;
-                text-align: center;
                 width: 100%;
-                gap: 0.5rem;
+                text-align: center;
+                padding-top: 1rem;
+                gap: 0;
             }
 
             nav ul li {
                 width: 100%;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                padding-bottom: 0.5rem;
             }
 
-            nav ul li:last-child { border-bottom: none; }
+            nav ul li a {
+                display: block;
+                padding: 15px 0;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            /* Hamburger to X Animation */
+            .menu-toggle.is-active .bar:nth-child(2) {
+                opacity: 0;
+            }
+            .menu-toggle.is-active .bar:nth-child(1) {
+                transform: translateY(9px) rotate(45deg);
+            }
+            .menu-toggle.is-active .bar:nth-child(3) {
+                transform: translateY(-9px) rotate(-45deg);
+            }
+        }
+
+        @media (max-width: 480px) {
             .hero h1 { font-size: 1.8rem; }
             .services-grid { grid-template-columns: 1fr; }
             .footer-links a { display: block; margin: 10px 0; }
@@ -402,12 +441,21 @@
     <!-- Header -->
     <header>
         <a href="#" class="logo">Astro Ajinkya</a>
-        <nav>
+        
+        <!-- Hamburger Menu Button -->
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav id="nav-menu">
             <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#reviews">Reviews</a></li>
-                <li><a href="#contact">Contact Us</a></li>
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#services" class="nav-link">Services</a></li>
+                <li><a href="#reviews" class="nav-link">Reviews</a></li>
+                <li><a href="#contact" class="nav-link">Contact Us</a></li>
             </ul>
         </nav>
     </header>
@@ -546,7 +594,7 @@
         </div>
     </section>
 
-    <!-- Contact Form with IDs for JS -->
+    <!-- Contact Form -->
     <section class="contact" id="contact">
         <h2 class="section-title">Contact Us</h2>
         <div class="contact-container">
@@ -598,10 +646,29 @@
         </div>
     </footer>
 
-    <!-- WhatsApp Integration Script -->
+    <!-- Interactive Scripts -->
     <script>
+        // --- Mobile Menu Toggle Logic ---
+        const menuToggle = document.getElementById('mobile-menu');
+        const navMenu = document.getElementById('nav-menu');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        // Open/Close menu when clicking the hamburger button
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('is-active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu automatically when a link is clicked
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('is-active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // --- WhatsApp Form Logic ---
         function sendToWhatsApp() {
-            // Get the values from the form
             let name = document.getElementById('wa_name').value;
             let phone = document.getElementById('wa_phone').value;
             let email = document.getElementById('wa_email').value;
@@ -609,16 +676,14 @@
             let city = document.getElementById('wa_city').value;
             let concern = document.getElementById('wa_concern').value;
 
-            // Simple validation to ensure required fields are filled
             if (name.trim() === '' || phone.trim() === '') {
                 alert('Please fill in your Name and Phone number before sending.');
                 return; 
             }
 
-            // CHANGE THIS TO YOUR NUMBER (Country code + number, no plus sign or spaces)
-            let myWhatsAppNumber = "917413820302"; 
+            // CHANGE THIS NUMBER TO YOUR WHATSAPP NUMBER (include country code without + symbol)
+            let myWhatsAppNumber = "919876543210"; 
 
-            // Format the message
             let message = `*New Website Inquiry*%0A%0A`;
             message += `*Name:* ${name}%0A`;
             message += `*Phone:* ${phone}%0A`;
@@ -627,10 +692,7 @@
             if (city) message += `*City:* ${city}%0A`;
             if (concern) message += `*Concern:* ${concern}%0A`;
 
-            // Create the WhatsApp URL
             let whatsappURL = `https://wa.me/${myWhatsAppNumber}?text=${message}`;
-
-            // Open WhatsApp in a new tab/window
             window.open(whatsappURL, '_blank');
         }
     </script>
