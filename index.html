@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Love Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background-color: #fce4ec; /* Light pink background */
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255, 182, 193, 0.4) 10px, transparent 10px),
+                radial-gradient(circle at 80% 60%, rgba(255, 182, 193, 0.4) 15px, transparent 15px),
+                radial-gradient(circle at 40% 80%, rgba(255, 182, 193, 0.4) 8px, transparent 8px),
+                radial-gradient(circle at 70% 20%, rgba(255, 182, 193, 0.4) 12px, transparent 12px);
+            background-size: 200px 200px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px; }
+            100% { background-position: 200px 200px, -200px 200px, 200px -200px, -200px -200px; }
+        }
+
+        /* Specific style for the No button to allow absolute positioning for movement */
+        #btn-no {
+            position: absolute;
+            transition: all 0.2s ease-out; /* Smooth transition when moving */
+            z-index: 50; /* Ensure it stays on top */
+            white-space: nowrap;
+        }
+        
+        .buttons-container {
+             position: relative;
+             height: 60px;
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             gap: 1rem;
+             margin-top: 2rem;
+             width: 100%;
+        }
+
+        .heart-icon {
+            color: #e91e63;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .hidden-section {
+            display: none !important;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center relative py-10">
+
+    <!-- VIEW 1: GENERATOR FORM (Shown by default if no URL params) -->
+    <div id="generator-view" class="bg-white/95 backdrop-blur-sm p-8 rounded-3xl shadow-2xl w-full max-w-lg mx-4 border-4 border-pink-100 z-10 hidden-section">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Create a Love Page <span class="heart-icon inline-block">♥</span></h1>
+            <p class="text-gray-500 text-sm">Fill in the details below to generate a custom, shareable link!</p>
+        </div>
+
+        <form id="generator-form" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">To (Her Name)</label>
+                    <input type="text" id="input-to" placeholder="e.g., Sarah" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">From (Your Name)</label>
+                    <input type="text" id="input-from" placeholder="e.g., John" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 outline-none transition">
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">The Question</label>
+                <input type="text" id="input-question" required placeholder="e.g., Will you go out with me?" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-pink-400 outline-none transition" value="Will you go out with me?">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">'Yes' Button Text</label>
+                    <input type="text" id="input-yes" required placeholder="e.g., Yes!" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 outline-none transition" value="Yes">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">'No' Button Text</label>
+                    <input type="text" id="input-no" required placeholder="e.g., No" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 outline-none transition" value="No">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Success Message (After they click Yes)</label>
+                <input type="text" id="input-success" required placeholder="e.g., Yay! I knew it!" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 outline-none transition" value="Yay! I knew it! ♥">
+            </div>
+
+            <div class="pt-4 grid grid-cols-2 gap-4">
+                <button type="button" id="btn-live-preview" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition active:scale-95 focus:outline-none">
+                    Preview
+                </button>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition active:scale-95 focus:outline-none">
+                    Generate Link
+                </button>
+            </div>
+        </form>
+
+        <!-- Link Output Area (Hidden initially) -->
+        <div id="link-output-section" class="mt-8 p-4 bg-pink-50 rounded-xl border border-pink-200 hidden-section fade-in">
+            <h3 class="text-sm font-bold text-pink-600 mb-2">Your link is ready! Send this to them:</h3>
+            <div class="flex items-center gap-2">
+                <input type="text" id="generated-link" readonly class="w-full px-3 py-2 bg-white border border-pink-200 rounded-lg text-sm text-gray-600 focus:outline-none">
+                <button id="btn-copy" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition">
+                    Copy
+                </button>
+            </div>
+            <div class="mt-4 text-center">
+                <button id="btn-preview" class="text-pink-500 font-semibold text-sm hover:underline">
+                    Preview Page
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: THE INTERACTIVE PAGE (Shown when link is opened) -->
+    <div id="interactive-view" class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-md w-full mx-4 border-4 border-pink-100 z-10 transition-all duration-500 transform hover:scale-105 hidden-section relative">
+        
+        <!-- Back to Editor Button (Only for Live Preview) -->
+        <button id="btn-back-edit" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600 font-semibold text-sm hidden-section z-50 flex items-center gap-1 transition focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Edit
+        </button>
+
+        <!-- To Name Header -->
+        <h2 id="display-to" class="text-3xl font-bold text-pink-500 mb-6 hidden-section fade-in"></h2>
+
+        <!-- Main Question Section -->
+        <div id="question-section" class="fade-in">
+            <img src="https://media.tenor.com/ef3-J99Z-5UAAAAi/bear-blow-a-kiss.gif" alt="Cute Bear" class="w-48 h-48 mx-auto mb-6 rounded-lg object-cover shadow-sm">
+            
+            <h1 id="display-question" class="text-3xl font-bold text-gray-800 mb-2">Will you go out with me?</h1>
+            <p class="text-gray-500 mb-8">Choose wisely! <span class="heart-icon inline-block text-xl">♥</span></p>
+
+            <div class="buttons-container" id="button-wrapper">
+                <button id="btn-yes" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-110 focus:outline-none focus:ring-4 focus:ring-pink-300 z-10 relative">
+                    Yes
+                </button>
+                
+                <button id="btn-no" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-8 rounded-full shadow-md focus:outline-none focus:ring-4 focus:ring-gray-100">
+                    No
+                </button>
+            </div>
+        </div>
+
+        <!-- Success Message Section (Hidden initially) -->
+        <div id="success-section" class="hidden-section fade-in">
+            <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Happy Bears" class="w-48 h-48 mx-auto mb-6 rounded-lg object-cover shadow-sm">
+            <h1 id="display-success" class="text-3xl font-bold text-pink-500 mb-4">Yay! I knew it! ♥</h1>
+            <p class="text-lg text-gray-700 mb-6">Can't wait!</p>
+            
+            <button id="btn-create-own" class="bg-pink-100 text-pink-600 font-semibold py-2 px-6 rounded-full hover:bg-pink-200 transition text-sm">
+                Create Your Own
+            </button>
+        </div>
+
+        <!-- From Name Footer -->
+        <p id="display-from" class="text-sm font-medium text-gray-400 mt-6 hidden-section fade-in"></p>
+
+    </div>
+
+    <!-- Toast element for copy confirmation -->
+    <div id="toast">Link copied to clipboard!</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Elements ---
+            const viewGenerator = document.getElementById('generator-view');
+            const viewInteractive = document.getElementById('interactive-view');
+            
+            const form = document.getElementById('generator-form');
+            const linkOutputSection = document.getElementById('link-output-section');
+            const generatedLinkInput = document.getElementById('generated-link');
+            const btnCopy = document.getElementById('btn-copy');
+            const btnPreview = document.getElementById('btn-preview');
+            const toast = document.getElementById('toast');
+
+            const questionSection = document.getElementById('question-section');
+            const successSection = document.getElementById('success-section');
+            const btnYes = document.getElementById('btn-yes');
+            const btnNo = document.getElementById('btn-no');
+            const btnCreateOwn = document.getElementById('btn-create-own');
+            const btnBackEdit = document.getElementById('btn-back-edit');
+            
+            // Display elements
+            const displayTo = document.getElementById('display-to');
+            const displayFrom = document.getElementById('display-from');
+            const displayQuestion = document.getElementById('display-question');
+            const displaySuccess = document.getElementById('display-success');
+
+            // --- 1. Routing / Initialization Logic ---
+            // Check if URL has data parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedData = urlParams.get('d');
+
+            if (encodedData) {
+                // We are in viewer mode!
+                try {
+                    // Decode base64 and parse JSON to hide details in URL (Handles Unicode/Emojis)
+                    const data = JSON.parse(decodeURIComponent(atob(encodedData)));
+                    
+                    // Populate the UI
+                    if(data.t) {
+                        displayTo.innerHTML = `${data.t} 💖`;
+                        displayTo.classList.remove('hidden-section');
+                    }
+                    if(data.f) {
+                        displayFrom.innerHTML = `With love, ${data.f}`;
+                        displayFrom.classList.remove('hidden-section');
+                    }
+                    
+                    displayQuestion.innerText = data.q || "Will you go out with me?";
+                    btnYes.innerText = data.y || "Yes";
+                    btnNo.innerText = data.n || "No";
+                    displaySuccess.innerText = data.s || "Yay! I knew it! ♥";
+
+                    // Show interactive view
+                    viewGenerator.classList.add('hidden-section');
+                    viewInteractive.classList.remove('hidden-section');
+                } catch (e) {
+                    console.error("Invalid shared link data", e);
+                    // Fallback to generator
+                    viewGenerator.classList.remove('hidden-section');
+                }
+            } else {
+                // We are in generator mode!
+                viewGenerator.classList.remove('hidden-section');
+            }
+
+            // --- 2. Generator Logic ---
+            
+            // Helper function to get current form link
+            function getGeneratedUrl() {
+                const data = {
+                    t: document.getElementById('input-to').value.trim(),
+                    f: document.getElementById('input-from').value.trim(),
+                    q: document.getElementById('input-question').value.trim(),
+                    y: document.getElementById('input-yes').value.trim(),
+                    n: document.getElementById('input-no').value.trim(),
+                    s: document.getElementById('input-success').value.trim()
+                };
+                // Encode to Base64 to make url neat (Handle Unicode characters safely)
+                const base64Data = btoa(encodeURIComponent(JSON.stringify(data)));
+                const baseUrl = window.location.origin + window.location.pathname;
+                return `${baseUrl}?d=${base64Data}`;
+            }
+
+            // Live Preview Button action
+            const btnLivePreview = document.getElementById('btn-live-preview');
+            if(btnLivePreview) {
+                btnLivePreview.addEventListener('click', () => {
+                    // Instead of opening a new tab, populate and switch views instantly
+                    const toVal = document.getElementById('input-to').value.trim();
+                    if(toVal) {
+                        displayTo.innerHTML = `${toVal} 💖`;
+                        displayTo.classList.remove('hidden-section');
+                    } else {
+                        displayTo.classList.add('hidden-section');
+                    }
+
+                    const fromVal = document.getElementById('input-from').value.trim();
+                    if(fromVal) {
+                        displayFrom.innerHTML = `With love, ${fromVal}`;
+                        displayFrom.classList.remove('hidden-section');
+                    } else {
+                        displayFrom.classList.add('hidden-section');
+                    }
+
+                    displayQuestion.innerText = document.getElementById('input-question').value.trim() || "Will you go out with me?";
+                    btnYes.innerText = document.getElementById('input-yes').value.trim() || "Yes";
+                    btnNo.innerText = document.getElementById('input-no').value.trim() || "No";
+                    displaySuccess.innerText = document.getElementById('input-success').value.trim() || "Yay! I knew it! ♥";
+
+                    // Reset internal state
+                    questionSection.classList.remove('hidden-section');
+                    successSection.classList.add('hidden-section');
+                    
+                    // Show Back button
+                    btnBackEdit.classList.remove('hidden-section');
+
+                    // Switch panels
+                    viewGenerator.classList.add('hidden-section');
+                    viewInteractive.classList.remove('hidden-section');
+                });
+            }
+
+            // Back to Editor Button action
+            if(btnBackEdit) {
+                btnBackEdit.addEventListener('click', () => {
+                    // Hide interactive view, show generator
+                    viewInteractive.classList.add('hidden-section');
+                    viewGenerator.classList.remove('hidden-section');
+                    btnBackEdit.classList.add('hidden-section');
+
+                    // Reset 'No' button position back to original container
+                    btnNo.style.position = 'relative';
+                    btnNo.style.left = 'auto';
+                    btnNo.style.top = 'auto';
+                    btnNo.style.margin = '0';
+                    btnNo.style.transition = 'none'; // Temporarily disable animation
+                    document.getElementById('button-wrapper').appendChild(btnNo);
+                    isFirstHover = true; // Reset jump flag
+                    
+                    // Re-enable transition
+                    setTimeout(() => {
+                        btnNo.style.transition = 'all 0.2s ease-out';
+                    }, 50);
+                });
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Construct URL
+                const shareableUrl = getGeneratedUrl();
+
+                // Display
+                generatedLinkInput.value = shareableUrl;
+                linkOutputSection.classList.remove('hidden-section');
+            });
+
+            // Copy Link
+            btnCopy.addEventListener('click', () => {
+                generatedLinkInput.select();
+                try {
+                    // Try modern clipboard API first
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(generatedLinkInput.value).then(showToast);
+                    } else {
+                        // Fallback
+                        document.execCommand('copy');
+                        showToast();
+                    }
+                } catch (err) {
+                    console.error('Failed to copy text', err);
+                }
+            });
+
+            function showToast() {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            // Preview button in generator
+            btnPreview.addEventListener('click', () => {
+                btnLivePreview.click(); // Use the fast DOM preview
+            });
+
+            // Create your own button in success state
+            btnCreateOwn.addEventListener('click', () => {
+                window.location.href = window.location.origin + window.location.pathname;
+            });
+
+            // --- 3. Interactive Page Logic (The jumping button) ---
+            let isFirstHover = true;
+
+            // Handle "Yes" click
+            btnYes.addEventListener('click', () => {
+                questionSection.classList.add('hidden-section');
+                successSection.classList.remove('hidden-section');
+                createConfetti();
+            });
+
+            // Handle "No" movement
+            const moveButton = (e) => {
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                const btnRect = btnNo.getBoundingClientRect();
+
+                if (isFirstHover) {
+                    const rect = btnNo.getBoundingClientRect();
+                    btnNo.style.position = 'fixed'; 
+                    btnNo.style.left = `${rect.left}px`;
+                    btnNo.style.top = `${rect.top}px`;
+                    btnNo.style.margin = '0'; 
+                    
+                    document.body.appendChild(btnNo);
+                    isFirstHover = false;
+                    
+                    setTimeout(() => calculateNewPosition(windowWidth, windowHeight, btnRect), 10);
+                } else {
+                    calculateNewPosition(windowWidth, windowHeight, btnRect);
+                }
+            };
+
+            // Calculate jump logic
+            function calculateNewPosition(windowWidth, windowHeight, btnRect) {
+                const maxJump = Math.min(windowWidth / 2, 400); 
+                const minJump = 100;
+
+                let currentLeft = parseFloat(btnNo.style.left) || btnRect.left;
+                let currentTop = parseFloat(btnNo.style.top) || btnRect.top;
+
+                let newLeft, newTop;
+                let validPosition = false;
+                let attempts = 0;
+
+                while (!validPosition && attempts < 20) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * (maxJump - minJump) + minJump;
+
+                    newLeft = currentLeft + Math.cos(angle) * distance;
+                    newTop = currentTop + Math.sin(angle) * distance;
+
+                    const padding = 20;
+                    if (
+                        newLeft > padding && 
+                        newLeft < (windowWidth - btnRect.width - padding) &&
+                        newTop > padding && 
+                        newTop < (windowHeight - btnRect.height - padding)
+                    ) {
+                        validPosition = true;
+                    }
+                    attempts++;
+                }
+
+                // Fallback if it fails to find a good spot
+                if (!validPosition) {
+                    newLeft = Math.random() * (windowWidth - btnRect.width - 40) + 20;
+                    newTop = Math.random() * (windowHeight - btnRect.height - 40) + 20;
+                }
+
+                btnNo.style.left = `${newLeft}px`;
+                btnNo.style.top = `${newTop}px`;
+            }
+
+            // Events to trigger the movement
+            btnNo.addEventListener('mouseover', moveButton);
+            btnNo.addEventListener('touchstart', (e) => {
+                e.preventDefault(); 
+                moveButton(e);
+            }, { passive: false });
+            btnNo.addEventListener('click', (e) => {
+                e.preventDefault();
+                moveButton(e);
+            });
+
+            // --- 4. Confetti Animation ---
+            function createConfetti() {
+                const colors = ['#f43f5e', '#ec4899', '#d946ef', '#8b5cf6', '#3b82f6'];
+                for (let i = 0; i < 60; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-20px';
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = Math.random() * 10 + 5 + 'px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.zIndex = '1000';
+                    confetti.style.pointerEvents = 'none';
+                    
+                    const duration = Math.random() * 3 + 2;
+                    const rotation = Math.random() * 360;
+                    
+                    confetti.style.transform = `rotate(${rotation}deg)`;
+                    confetti.style.transition = `top ${duration}s ease-in, transform ${duration}s linear, opacity ${duration}s ease-out`;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.style.top = '100vh';
+                        confetti.style.transform = `rotate(${rotation + 720}deg)`;
+                        confetti.style.opacity = '0';
+                    }, 10);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, duration * 1000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
