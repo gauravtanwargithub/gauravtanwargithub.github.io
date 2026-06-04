@@ -237,6 +237,28 @@
             const displayQuestion = document.getElementById('display-question');
             const displaySuccess = document.getElementById('display-success');
 
+            // State Variables for Interactive Page
+            let originalNoText = "No";
+            let noMessageIndex = 0;
+            let currentYesScale = 1;
+            const teaseMessages = [
+                "Are you sure?", 
+                "Really sure?", 
+                "Think again!", 
+                "Last chance!", 
+                "Surely not?", 
+                "You might regret this!", 
+                "Give it another thought!", 
+                "Are you absolutely certain?", 
+                "This could be a mistake!", 
+                "Have a heart!", 
+                "Don't be so cold!", 
+                "Change of heart?", 
+                "Wouldn't you reconsider?", 
+                "Is that your final answer?", 
+                "You're breaking my heart ;("
+            ];
+
             // --- 1. Routing / Initialization Logic ---
             // Check if URL has data parameter
             const urlParams = new URLSearchParams(window.location.search);
@@ -260,7 +282,8 @@
                     
                     displayQuestion.innerText = data.q || "Will you go out with me?";
                     btnYes.innerText = data.y || "Yes";
-                    btnNo.innerText = data.n || "No";
+                    originalNoText = data.n || "No";
+                    btnNo.innerText = originalNoText;
                     displaySuccess.innerText = data.s || "Yay! I knew it! ♥";
 
                     // Show interactive view
@@ -317,7 +340,8 @@
 
                     displayQuestion.innerText = document.getElementById('input-question').value.trim() || "Will you go out with me?";
                     btnYes.innerText = document.getElementById('input-yes').value.trim() || "Yes";
-                    btnNo.innerText = document.getElementById('input-no').value.trim() || "No";
+                    originalNoText = document.getElementById('input-no').value.trim() || "No";
+                    btnNo.innerText = originalNoText;
                     displaySuccess.innerText = document.getElementById('input-success').value.trim() || "Yay! I knew it! ♥";
 
                     // Reset internal state
@@ -347,6 +371,15 @@
                     btnNo.style.top = 'auto';
                     btnNo.style.margin = '0';
                     btnNo.style.transition = 'none'; // Temporarily disable animation
+                    
+                    // Reset 'No' button text and variables
+                    btnNo.innerText = originalNoText;
+                    noMessageIndex = 0;
+                    
+                    // Reset 'Yes' button scale
+                    currentYesScale = 1;
+                    btnYes.style.transform = 'none';
+
                     document.getElementById('button-wrapper').appendChild(btnNo);
                     isFirstHover = true; // Reset jump flag
                     
@@ -414,6 +447,18 @@
 
             // Handle "No" movement
             const moveButton = (e) => {
+                // Update 'No' button text
+                if (noMessageIndex < teaseMessages.length) {
+                    btnNo.innerText = teaseMessages[noMessageIndex];
+                    noMessageIndex++;
+                } else {
+                    btnNo.innerText = teaseMessages[Math.floor(Math.random() * teaseMessages.length)];
+                }
+
+                // Grow 'Yes' button (classic meme behavior)
+                currentYesScale += 0.15;
+                btnYes.style.transform = `scale(${currentYesScale})`;
+
                 const windowWidth = window.innerWidth;
                 const windowHeight = window.innerHeight;
                 const btnRect = btnNo.getBoundingClientRect();
